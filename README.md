@@ -2,6 +2,8 @@
 
 ТГ-бот, управляющий чатом и проверяющий участников чата на предмет подписки на канал.
 
+![Готово](https://github.com/kirich-yo/subscribe_bot/blob/main/assets/images/13.png)
+
 ## Принцип работы бота
 
 Бот отслеживает пользователей в чате и канале, которые связаны друг с другом при помощи команды `/bind` (см. ниже). Бот не позволяет пользователям писать сообщения, пока они не подпишутся на канал.
@@ -41,8 +43,8 @@ LOG_FILE_PATH=[путь к папке, в которой хранятся все
 docker compose up
 ```
 Данная команда при первом запуске выполняет все необходимые для работы бота подготовительные этапы.
-![Первый запуск]()
-![Запущенная инстанция бота]()
+![Первый запуск](https://github.com/kirich-yo/subscribe_bot/blob/main/assets/images/2.png)
+![Запущенная инстанция бота](https://github.com/kirich-yo/subscribe_bot/blob/main/assets/images/3.png)
 Завершить его работу можно следующей командой:
 ```
 docker compose down
@@ -79,16 +81,21 @@ systemctl stop subscribe-bot.service
 ```
 systemctl status subscribe-bot.service
 ```
-![systemctl status subscribe-bot.service]()
+![systemctl status subscribe-bot.service](https://github.com/kirich-yo/subscribe_bot/blob/main/assets/images/4.png)
 
 8. Пригласите уже готового к использованию бота в свои чат и канал и назначьте права администратора:
 
-![]()
+![5](https://github.com/kirich-yo/subscribe_bot/blob/main/assets/images/5.png)
+![6](https://github.com/kirich-yo/subscribe_bot/blob/main/assets/images/6.png)
+![7](https://github.com/kirich-yo/subscribe_bot/blob/main/assets/images/7.png)
+![8](https://github.com/kirich-yo/subscribe_bot/blob/main/assets/images/8.png)
+![9](https://github.com/kirich-yo/subscribe_bot/blob/main/assets/images/9.png)
+![10](https://github.com/kirich-yo/subscribe_bot/blob/main/assets/images/10.png)
 
 9. Привяжите свой канал к чату с помощью команды `/bind [ссылка на ТГК]`:
-![/bind]()
+![/bind](https://github.com/kirich-yo/subscribe_bot/blob/main/assets/images/11.png)
 Отвязать его можно командой `/unbind`:
-![/unbind]()
+![/unbind](https://github.com/kirich-yo/subscribe_bot/blob/main/assets/images/12.png)
 
 10. Теперь бот умеет отслеживать всех пользовалей и контролировать их!
-![Готово]()
+![Готово](https://github.com/kirich-yo/subscribe_bot/blob/main/assets/images/13.png)
