@@ -29,7 +29,14 @@ git clone https://github.com/kirich-yo/subscribe_bot.git
 cd subscribe_bot/
 ```
 
-5. Запустите процесс развертки в Docker Compose:
+5. Запишите токен бота и все остальные настройки в файл `.env`:
+```
+BOT_TOKEN=[токен вашего бота (обязательно)]
+MESSAGE_TIMEOUT=[время, по истечению которого сообщения бота удаляются сами (в секундах)]
+LOG_FILE_PATH=[путь к папке, в которой хранятся все логи бота]
+```
+
+6. Запустите процесс развертки в Docker Compose:
 ```
 docker compose up
 ```
@@ -38,3 +45,33 @@ docker compose up
 ```
 docker compose down
 ```
+
+7. Создайте сервис для systemd для полной автоматизации запуска/остановки бота (путь к файлу Docker Compose замените на ваш):
+```
+# /etc/systemd/system/subscribe-bot.service
+
+[Unit]
+Description=Subscribe Bot
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/bash -c "docker compose -f /root/subscribe_bot/docker-compose.yml up --detach"
+ExecStop=/bin/bash -c "docker compose -f /root/subscribe_bot/docker-compose.yml stop"
+
+[Install]
+WantedBy=multi-user.target
+```
+Включите автозапуск нового сервиса:
+```
+systemctl enable subscribe-bot.service
+```
+В дальнейшем вы его сможете запускать/останавливать следующими командами:
+```
+systemctl start subscribe-bot.service
+systemctl stop subscribe-bot.service
+```
+
+8. Пригласите уже готового к использованию бота в свои чат и канал и назначьте права администратора:
