@@ -47,7 +47,7 @@ docker compose down
 ```
 
 7. Создайте сервис для systemd для полной автоматизации запуска/остановки бота (путь к файлу Docker Compose замените на ваш):
-```
+```ini
 # /etc/systemd/system/subscribe-bot.service
 
 [Unit]
