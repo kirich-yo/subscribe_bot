@@ -43,8 +43,11 @@ LOG_FILE_PATH=[путь к папке, в которой хранятся все
 docker compose up
 ```
 Данная команда при первом запуске выполняет все необходимые для работы бота подготовительные этапы.
+
 ![Первый запуск](https://github.com/kirich-yo/subscribe_bot/blob/main/assets/images/2.jpg)
+
 ![Запущенная инстанция бота](https://github.com/kirich-yo/subscribe_bot/blob/main/assets/images/3.jpg)
+
 Завершить его работу можно следующей командой:
 ```
 docker compose down
@@ -86,16 +89,25 @@ systemctl status subscribe-bot.service
 8. Пригласите уже готового к использованию бота в свои чат и канал и назначьте права администратора:
 
 ![5](https://github.com/kirich-yo/subscribe_bot/blob/main/assets/images/5.jpg)
+
 ![6](https://github.com/kirich-yo/subscribe_bot/blob/main/assets/images/6.jpg)
+
 ![7](https://github.com/kirich-yo/subscribe_bot/blob/main/assets/images/7.jpg)
+
 ![8](https://github.com/kirich-yo/subscribe_bot/blob/main/assets/images/8.jpg)
+
 ![9](https://github.com/kirich-yo/subscribe_bot/blob/main/assets/images/9.jpg)
+
 ![10](https://github.com/kirich-yo/subscribe_bot/blob/main/assets/images/10.jpg)
 
 9. Привяжите свой канал к чату с помощью команды `/bind [ссылка на ТГК]`:
+
 ![/bind](https://github.com/kirich-yo/subscribe_bot/blob/main/assets/images/11.jpg)
+
 Отвязать его можно командой `/unbind`:
+
 ![/unbind](https://github.com/kirich-yo/subscribe_bot/blob/main/assets/images/12.jpg)
 
 10. Теперь бот умеет отслеживать всех пользовалей и контролировать их!
+
 ![Готово](https://github.com/kirich-yo/subscribe_bot/blob/main/assets/images/13.jpg)
