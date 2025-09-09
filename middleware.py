@@ -1,9 +1,15 @@
 from typing import Callable, Dict, Any, Awaitable
 
 from aiogram import BaseMiddleware, html
-from aiogram.types import Message
+from aiogram.types import Message, ChatMember
+from aiogram.enums import ChatMemberStatus
 
-class GroupMiddleware(BaseMiddleware):
+ADMINISTRATIVE_STATUSES = [
+        ChatMemberStatus.CREATOR,
+        ChatMemberStatus.ADMINISTRATOR
+]
+
+class ChatManagementMiddleware(BaseMiddleware):
     def __init__(self) -> None:
         pass
 
@@ -15,6 +21,11 @@ class GroupMiddleware(BaseMiddleware):
     ) -> Any:
         if event.chat.type == 'private':
             await event.answer(html.bold('⚠️ Данная команда не может использоваться в личных сообщениях!'))
+            return
+
+        sender: ChatMember = await event.chat.get_member(event.from_user.id)
+        if sender.status not in ADMINISTRATIVE_STATUSES:
+            await event.answer(html.bold('⚠️ Данная команда может использоваться только администраторами чата!'))
             return
 
         return await handler(event, data)

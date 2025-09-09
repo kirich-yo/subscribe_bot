@@ -20,7 +20,7 @@ from aiogram.types import Message, ChatMemberUpdated
 from aiogram.enums import ChatMemberStatus
 from aiogram.methods import GetChatMember
 
-from middleware import GroupMiddleware
+from middleware import ChatManagementMiddleware
 
 
 BAD_STATUSES = [
@@ -32,16 +32,16 @@ BAD_STATUSES = [
 AutoDeletingMessage = namedtuple('AutoDeletingMessage', ['message', 'deadline'])
 FutureSubscriber = namedtuple('FutureSubscriber', ['user', 'chat', 'channel_id'])
 
-to_monitor = redis.Redis(host='localhost', port=6379, db=0)
+to_monitor = redis.Redis(host='redis', port=6379, db=0)
 message_queue: list[AutoDeletingMessage] = []
 future_subscribers: list[FutureSubscriber] = []
 
 bot = Bot(token=os.environ['BOT_TOKEN'], default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 
 dp = Dispatcher()
-group_only = Router()
-group_only.message.middleware(GroupMiddleware())
-dp.include_router(group_only)
+chat_mgmt = Router()
+chat_mgmt.message.middleware(ChatManagementMiddleware())
+dp.include_router(chat_mgmt)
 
 
 def graceful_shutdown_handler(signum, frame):
@@ -116,10 +116,10 @@ async def monitor_future_subscribers() -> None:
 
 @dp.message(CommandStart())
 async def command_start_handler(message: Message) -> None:
-    await message.answer(f"Привет! Этот бот предназначен для управления чатом и проверки участников чата на предмет подписки на канал. Для того, чтобы бот мог функционировать, пригласите его в чат и назначьте права администратора. Чтобы привязать его к каналу, подписчики которого будут отслеживаться, напишите команду {html.code('/bind https://t.me/ссылка_на_канал')}. Аналогично, чтобы отвязать чат от канала, напишите команду {html.code('/unbind')}. Не забудьте также добавить бота в канал и назначить права администратора.")
+    await message.answer(f"Привет! Этот бот предназначен для управления чатом и проверки участников чата на предмет подписки на канал. Для того, чтобы бот мог функционировать, пригласите его в чат и назначьте права администратора. Чтобы привязать его к каналу, подписчики которого будут отслеживаться, напишите команду {html.code('/bind https://t.me/ссылка_на_канал')}. Аналогично, чтобы отвязать чат от канала, напишите команду {html.code('/unbind')}. Не забудьте также добавить бота в канал и назначить права администратора. Подробную информацию о боте смотрите в <a href=\"https://github.com/kirich-yo/subscribe_bot\">репозитории GitHub</a>.")
 
 
-@group_only.message(Command('bind')) 
+@chat_mgmt.message(Command('bind')) 
 async def bind_command_handler(message: Message, command: CommandObject) -> None:
     if not command.args:
         answer = await message.answer(html.bold('⚠️ Укажите ссылку на канал, который вы хотите привязать к чату!'))
@@ -135,7 +135,7 @@ async def bind_command_handler(message: Message, command: CommandObject) -> None
     add_message_to_queue(answer)
 
 
-@group_only.message(Command('unbind')) 
+@chat_mgmt.message(Command('unbind')) 
 async def unbind_command_handler(message: Message, command: CommandObject) -> None:
     delete_tg_channel(message.chat.id)
 
@@ -144,7 +144,7 @@ async def unbind_command_handler(message: Message, command: CommandObject) -> No
     add_message_to_queue(answer)
 
 
-@group_only.message(Command('show_bound_channel')) 
+@chat_mgmt.message(Command('show_bound_channel')) 
 async def show_bound_channel_command_handler(message: Message, command: CommandObject) -> None:
     tg_channel = get_tg_channel(message.chat.id)
     answer = None
@@ -164,7 +164,7 @@ async def show_bound_channel_command_handler(message: Message, command: CommandO
     add_message_to_queue(answer)
 
 
-@group_only.message(Command('set_welcome')) 
+@chat_mgmt.message(Command('set_welcome')) 
 async def set_welcome_command_handler(message: Message, command: CommandObject) -> None:
     if not command.args:
         answer = await message.answer(html.bold('⚠️ Укажите текст, который вы хотите установить в качестве приветствия для новых подписчиков канала!'))
@@ -179,7 +179,7 @@ async def set_welcome_command_handler(message: Message, command: CommandObject) 
     add_message_to_queue(answer)
 
 
-@group_only.message(Command('clear_welcome')) 
+@chat_mgmt.message(Command('clear_welcome')) 
 async def clear_welcome_command_handler(message: Message, command: CommandObject) -> None:
     delete_welcome_message(message.chat.id)
 
@@ -188,7 +188,7 @@ async def clear_welcome_command_handler(message: Message, command: CommandObject
     add_message_to_queue(answer)
 
 
-@group_only.message(Command('show_welcome')) 
+@chat_mgmt.message(Command('show_welcome')) 
 async def show_welcome_command_handler(message: Message, command: CommandObject) -> None:
     welcome_message = get_welcome_message(message.chat.id)
     answer = None
@@ -244,7 +244,7 @@ async def join_handler(chat_member: ChatMemberUpdated) -> None:
             )
 
 
-@dp.message(~F.chat.type.in_({'private', 'channel'}) & ~F.text.startswith('/'))
+@dp.message(~F.chat.type.in_({'private', 'channel'}) & ~F.text.startswith('/') & ~F.new_chat_members & ~F.left_chat_participant)
 async def message_handler(message: Message) -> None:
     user = message.from_user
     tg_channel = get_tg_channel(message.chat.id)
